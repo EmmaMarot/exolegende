@@ -1,0 +1,20 @@
+std::pair<int, int> getCellIndex(const Position& pos) {
+    const double gridSize = 0.25;  // 0.25 meters per cell
+    const int gridDim = 12;         // 12x12 grid
+
+    // Ensure the position is within the bounds of the 3x3m area
+    if (pos.x < 0 || pos.x >= 3 || pos.y < 0 || pos.y >= 3) {
+        std::cerr << "Position out of bounds!" << std::endl;
+        return {-1, -1}; // Return invalid indices if out of bounds
+    }
+
+    // Calculate the grid indices
+    int i = static_cast<int>(std::round(pos.x / gridSize));
+    int j = static_cast<int>(std::round(pos.y / gridSize));
+
+    // Clamp the indices to ensure they are within the 0-11 range
+    i = std::max(0, std::min(i, gridDim - 1));
+    j = std::max(0, std::min(j, gridDim - 1));
+
+    return {i, j};
+}
