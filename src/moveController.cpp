@@ -1,3 +1,6 @@
+#ifndef MOVECONTROLLER_H
+#define MOVECONTROLLER_H
+
 #include <iostream>
 #include "gladiator.h"
 
@@ -56,3 +59,5 @@ class MoveController{
 
 //     return 0;
 // }
+
+#endif
