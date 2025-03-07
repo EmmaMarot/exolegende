@@ -15,9 +15,6 @@ class MoveController{
         void process(){
             L = (speed - (angle * spacing / 2.0));
             R = (speed + (angle * spacing / 2.0));
-            
-            if (L > R){ R = R / L ; L = L / L;}
-            if (L < R){ L = L / R ; R = R / R;}
             gladiator->log("speed : %f\nangle : %f\nL : %f\nR : %f", speed, angle, L, R); // GFA 4.5.1     
             gladiator->control->setWheelSpeed(WheelAxis::LEFT, L); //control de la roue gauche
             gladiator->control->setWheelSpeed(WheelAxis::RIGHT, R); //controle de la roue droite
