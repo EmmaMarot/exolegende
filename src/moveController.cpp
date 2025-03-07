@@ -4,14 +4,14 @@
 class MoveController{
     private:
         float spacing = 0.11; // Wheel spacing (distance between wheels)
-        float L;
-        float R;
+        float L = 0.0;
+        float R = 0.0;
         Gladiator *gladiator;
     public: 
         MoveController(Gladiator *gladiator)
             : gladiator(gladiator) {}
-        float speed;
-        float angle;
+        float speed = 0.0;
+        float angle = 0.0;
         void process(){
             L = (speed - (angle * spacing / 2.0));
             R = (speed + (angle * spacing / 2.0));
