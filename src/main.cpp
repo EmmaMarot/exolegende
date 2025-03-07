@@ -1,5 +1,7 @@
 #include "gladiator.h"
+#include "moveController.cpp"
 Gladiator *gladiator;
+MoveController *test;
 void reset();
 void setup()
 {
@@ -20,12 +22,18 @@ void loop()
 {
     if (gladiator->game->isStarted())
     { // tester si un match à déjà commencer
-        // code de votre stratégie
-        gladiator->log("Hello world - Game Started"); // GFA 4.5.1
+        // code de votre stratégie   
+        test = new MoveController(gladiator);
+        test->angle = 1.0;
+        test->speed = 1.0;
+        test->process();
+        // gladiator->control->setWheelSpeed(WheelAxis::LEFT, 0.6); //control de la roue gauche
+        // gladiator->control->setWheelSpeed(WheelAxis::RIGHT, 0.6); //controle de la roue droite
+
     }
     else
     {
-        gladiator->log("Hello world - Game not Startd yet"); // GFA 4.5.1
+        // gladiator->log("Hello world - Game not Startd yet"); // GFA 4.5.1
     }
     delay(300);
 }
