@@ -100,7 +100,7 @@ class Behavior
                 if (
                     next != NULL && dblnext != NULL && rd.teamId != local->possession &&
                     next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 0 &&
-                dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j) || karadoc)
+                dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j))
             ){
                     this->gladiator->weapon->dropBombs(1);
                 }
@@ -143,7 +143,7 @@ class Behavior
         MazeSquare *cible = NULL; // masesquare en aproche
         POS p; // coordoner reel en aproche
         bool safe = true;
-        bool explored[244] = {0};
+        int explored[244] = {0};
     
         enum ORIENTATION orientation;
         // pour le parcour du maze en main droite
@@ -160,10 +160,16 @@ class Behavior
             if (tmp == NULL){return -1;}
             float tmpVal = 0.0;
             if (this->orientation == orientation){tmpVal += 1;}
-            tmpVal -= this->explored[(tmp->j * 12) + tmp->i] / 2.0;
-            tmpVal += (abs(tmp->i -6) / 4.0);
-            tmpVal += (abs(tmp->j -6) / 4.0);
-            tmpVal += tmp->coin.value;
+            if (this->gladiator->robot->getData().teamId != tmp->possession ){tmpVal += 2;}
+            tmpVal -= this->explored[(tmp->j * 12) + tmp->i] /4.0;
+            tmpVal += (abs(tmp->i -6) / 2.0);
+            tmpVal += (abs(tmp->j -6) / 2.0);
+            if (this->gladiator->weapon->getBombCount() <= tmp->coin.value )
+            {
+                tmpVal += tmp->coin.value * 2 ;
+            }else{
+                tmpVal += tmp->coin.value;
+            }
             tmpVal -= tmp->danger;
             return tmpVal;
         }
