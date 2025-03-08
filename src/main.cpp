@@ -17,7 +17,7 @@ void reset()
     // initialisation de toutes vos variables avant le début d'un match
     gladiator->log("Call of reset function"); // GFA 4.5.1
     behavior = new Behavior(gladiator);
-    behavior->FPC->MC->reset();
+    behavior->MC->reset();
 }
 
 void loop()
