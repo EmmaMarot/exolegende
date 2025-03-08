@@ -1,3 +1,7 @@
+
+#ifndef GIFP_H
+#define GIFP_H
+
 std::pair<int, int> getCellIndex(const Position& pos) {
     const double gridSize = 0.25;  // 0.25 meters per cell
     const int gridDim = 12;         // 12x12 grid
@@ -18,3 +22,5 @@ std::pair<int, int> getCellIndex(const Position& pos) {
 
     return {i, j};
 }
+
+#endif
