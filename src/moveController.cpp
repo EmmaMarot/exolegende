@@ -111,7 +111,7 @@ class MoveController{
                 // this->gladiator->log("Pure rotation mode");
             } else {
                 // Heading is good enough, move forward with small corrections
-                base_speed = 0.2;  // Fixed forward speed
+                base_speed = 0.35;  // Fixed forward speed
                 v_l = base_speed;
                 v_r = base_speed;
                 
@@ -128,8 +128,8 @@ class MoveController{
             // this->gladiator->control->setWheelSpeed(WheelAxis::LEFT, v_l);
             // this->gladiator->control->setWheelSpeed(WheelAxis::RIGHT, v_r);
 
-            float L = (base_speed - (heading_error * 0.11 / 2.0));
-            float R = (base_speed + (heading_error * 0.11 / 2.0));
+            float L = (base_speed - (heading_error * 0.16 / 2.0));
+            float R = (base_speed + (heading_error * 0.16 / 2.0));
             // gladiator->log("speed : %f\nangle : %f\nL : %f\nR : %f", speed, angle, L, R); // GFA 4.5.1     
             gladiator->control->setWheelSpeed(WheelAxis::LEFT, L); //control de la roue gauche
             gladiator->control->setWheelSpeed(WheelAxis::RIGHT, R); //controle de la roue droite

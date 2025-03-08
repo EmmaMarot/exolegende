@@ -79,30 +79,47 @@ class Behavior
             return ret;
         }
         void set_next_dest(){
-            RobotData rd = this->gladiator->robot->getData();
-            this->orientation = this->get_orientation();
-            MazeSquare *next = this->get_next_cible(gladiator->maze->getNearestSquare());
-            MazeSquare *dblNext = this->get_next_cible(next);
-
-            POS ret = this->get_next_move(next, dblNext);
-            this->FPC->MC->set_target(ret.x, ret.y);
+            if (this->safe)
+            {
+                RobotData rd = this->gladiator->robot->getData();
+                this->orientation = this->get_orientation();
+                MazeSquare *next = this->get_next_cible(gladiator->maze->getNearestSquare());
+                
+                if (next == NULL){
+                    return;
+                }
+                POS ret = this->get_next_move(next, NULL);
+                if (next->danger == 0 && this->gladiator->maze->getNearestSquare()->danger == 0 && this->gladiator->weapon->getBombCount() > 0){
+                    this->gladiator->weapon->dropBombs(1);
+                }
+                this->FPC->MC->set_target(ret.x, ret.y);
+            }
+        }
+        void set_paniq_dest(){
+            float ms = this->gladiator->maze->getSize();
+            this->FPC->MC->set_target(ms / 2.0, ms / 2.0);
         }
         void process(){
             if (this->FPC->MC->is_on_dest()){
                 this->set_next_dest();
             }
-            // this->gladiator->log("x, y => %f, %f\n", ret.x, ret.y);
-            // this->gladiator->log("x, y => %f, %f\n", rd.position.x, rd.position.y);
-            // exit(0);
-            // float dist = sqrt(((this->p.x - rd.position.x) * (this->p.x - rd.position.x)) + ((this->p.y - rd.position.y) * (this->p.y - rd.position.y)));
-            // if (dist < 0.05){
-            //     this->do_action();
-            // }
-            // if (cible == NULL)
-            // {
-                // this->do_action();
-            // }
-            // gladiator->log("\ncible x : %f\ncible y :%f", this->p.x, this->p.y);
+            RobotData rd = this->gladiator->robot->getData();
+            float cms = this->gladiator->maze->getCurrentMazeSize();
+            float ms = this->gladiator->maze->getSize();
+            float out = ms - cms;
+            if (rd.position.x < (out / 2.0) || rd.position.y < (out / 2.0) || rd.position.x > ms - (out / 2.0) || rd.position.y > ms - (out /2.0))
+            {
+                if (!this->safe){
+                    this->safe = false;
+                    this->set_next_dest();
+                }
+            }else{
+                this->safe = true;
+            }
+
+            if (!this->safe){
+                this->set_paniq_dest();
+            }
             this->FPC->process();
         }
     
@@ -112,6 +129,8 @@ class Behavior
         Gladiator *gladiator; // instance principal du robot
         MazeSquare *cible = NULL; // masesquare en aproche
         POS p; // coordoner reel en aproche
+        bool safe = true;
+        bool explored[244] = {false};
     
         enum ORIENTATION orientation;
         // pour le parcour du maze en main droite
@@ -124,47 +143,57 @@ class Behavior
             if (angle >= -2.356 && angle < -0.785){return SOUTH;}
             return EAST;
         }
+        int eval(MazeSquare * tmp, ORIENTATION orientation){
+            int tmpVal = 0;
+            if (this->orientation == orientation){tmpVal += 1;}
+            if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2;}
+            tmpVal += tmp->coin.value;
+            tmpVal -= tmp->danger;
+            return tmpVal;
+        }
         MazeSquare* get_next_cible(MazeSquare *current)
         {
             if (current == NULL)
             {
                 return NULL;
             }
-            switch (this->orientation)
-            {
-                case EAST:
-                    if (current->southSquare){return current->southSquare;}
-                    else if (current->eastSquare){return current->eastSquare;}
-                    else if (current->northSquare){return current->northSquare;}
-                    else if (current->westSquare){return current->westSquare;}
-                    /* code */
-                    break;
-                case NORTH:
-                    if (current->eastSquare){return current->eastSquare;}
-                    else if (current->northSquare){return current->northSquare;}
-                    else if (current->westSquare){return current->westSquare;}
-                    else if (current->southSquare){return current->southSquare;}
-                    /* code */
-                    break;
-                case WEST:
-                    if (current->northSquare){return current->northSquare;}
-                    else if (current->westSquare){return current->westSquare;}
-                    else if (current->southSquare){return current->southSquare;}
-                    else if (current->eastSquare){return current->eastSquare;}
-                    /* code */
-                    break;
-                case SOUTH:
-                    if (current->westSquare){return current->westSquare;}
-                    else if (current->southSquare){return current->southSquare;}
-                    else if (current->eastSquare){return current->eastSquare;}
-                    else if (current->northSquare){return current->northSquare;}
-                    /* code */
-                    break;
-                
-                default:
-                    break;
+            this->explored[(current->j * 12) + current->i] = true;
+            MazeSquare *next = NULL;
+            int value = -1;
+            MazeSquare *tmp;
+            tmp = current->eastSquare;
+            if (tmp){
+                int tmpVal = this->eval(tmp, EAST);
+                if (tmpVal > value){
+                    value = tmpVal;
+                    next = tmp;
+                }
             }
-            return NULL;
+            tmp = current->northSquare;
+            if (tmp){
+                int tmpVal = this->eval(tmp, NORTH);
+                if (tmpVal > value){
+                    value = tmpVal;
+                    next = tmp;
+                }
+            }
+            tmp = current->westSquare;
+            if (tmp){
+                int tmpVal = this->eval(tmp, WEST);
+                if (tmpVal > value){
+                    value = tmpVal;
+                    next = tmp;
+                }
+            }
+            tmp = current->southSquare;
+            if (tmp){
+                int tmpVal = this->eval(tmp, SOUTH);
+                if (tmpVal > value){
+                    value = tmpVal;
+                    next = tmp;
+                }
+            }
+            return next;
         }
         
 };
