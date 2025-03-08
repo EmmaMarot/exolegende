@@ -3,7 +3,8 @@
 
 #include <cmath>
 #include "gladiator.h"
-#include "followPathController.cpp"
+// #include "followPathController.cpp"
+#include "moveController.cpp"
 #include "pathFinder.cpp"
 
 enum ACTIONS {
@@ -26,18 +27,20 @@ class Behavior
         Behavior(Gladiator *gladiator)
         {
             this->gladiator = gladiator;
-            this->FPC = new FollowPathController(gladiator);
+//          this->FPC = new FollowPathController(gladiator);
+            this->MC = new MoveController(gladiator);
             this->PF = new PathFinder();
             
             this->set_next_dest();
         }
-        FollowPathController *FPC; // controller du deplacement
+//      FollowPathController *FPC; // controller du deplacement
+        MoveController *MC; // Nouveau controller du déplacement
 
         void calculate_action(){
             this->orientation = this->get_orientation();
         }
 
-        void do_action(){
+/*         void do_action(){
             switch (this->action)
             {
                 case MOVE_TO:
@@ -49,7 +52,7 @@ class Behavior
                     // }
                     // this->p = this->PF->get_next_move(this->gladiator); 
                     
-                    this->FPC->move_to(0.14, 2.0);
+                    // this->FPC->move_to(0.14, 2.0);
                     // this->FPC->move_to(this->p.x, this->p.y);
                     break;
                 }
@@ -57,7 +60,8 @@ class Behavior
                     ;
                     break;
             }
-        }
+        } */
+
         POS get_next_move(MazeSquare *current, MazeSquare *next)
         {
             struct POS ret;
@@ -100,15 +104,15 @@ class Behavior
             ){
                     this->gladiator->weapon->dropBombs(1);
                 }
-                this->FPC->MC->set_target(ret.x, ret.y);
+                this->MC->set_target(ret.x, ret.y);
             }
         }
         void set_paniq_dest(){
             float ms = this->gladiator->maze->getSize();
-            this->FPC->MC->set_target(ms / 2.0, ms / 2.0);
+            this->MC->set_target(ms / 2.0, ms / 2.0);
         }
         void process(){
-            if (this->FPC->MC->is_on_dest()){
+            if (this->MC->is_on_dest()){
                 this->set_next_dest();
             }
             RobotData rd = this->gladiator->robot->getData();
@@ -129,7 +133,7 @@ class Behavior
             if (!this->safe){
                 this->set_paniq_dest();
             }
-            this->FPC->process();
+            this->MC->process();
         }
     
     private:
