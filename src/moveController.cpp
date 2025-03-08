@@ -111,7 +111,7 @@ class MoveController{
                 // this->gladiator->log("Pure rotation mode");
             } else {
                 // Heading is good enough, move forward with small corrections
-                base_speed = 0.35;  // Fixed forward speed
+                base_speed = 0.28;  // Fixed forward speed
                 v_l = base_speed;
                 v_r = base_speed;
                 
