@@ -85,6 +85,7 @@ class MoveController{
             float error_dist = sqrt(error_x*error_x + error_y*error_y);
             float desired_linear_velocity = sqrt(2*error_dist*0.03) + 0.2;
 
+
             float angular_velocity = (Kp_heading * error_heading) + 
                              (Ki_heading * integral_heading) + 
                              (Kd_heading * derivative_heading);
