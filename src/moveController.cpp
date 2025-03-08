@@ -5,7 +5,7 @@
 #include "gladiator.h"
 
 // PID parameters
-const float Kp_heading = 2.6;
+const float Kp_heading = 1.8;
 // integral coef
 const float Ki_heading = 0.025;
 // derivative coeff
@@ -16,7 +16,7 @@ const float MAX_INTEGRAL = 0.8;
 
 class MoveController{
     private:
-        float time_step = 0.1;
+        float time_step = 0.13;
     
         float target_x = 0.0;
         float target_y = 0.0;
