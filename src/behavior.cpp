@@ -98,7 +98,7 @@ class Behavior
                 }
                 POS ret = this->get_next_move(next, NULL);
                 if (
-                    next != NULL && dblnext != NULL &&
+                    next != NULL && dblnext != NULL && rd.teamId != local->possession &&
                     next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 0 &&
                 dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j) || karadoc)
             ){
@@ -143,7 +143,7 @@ class Behavior
         MazeSquare *cible = NULL; // masesquare en aproche
         POS p; // coordoner reel en aproche
         bool safe = true;
-        bool explored[244] = {false};
+        bool explored[244] = {0};
     
         enum ORIENTATION orientation;
         // pour le parcour du maze en main droite
@@ -157,14 +157,12 @@ class Behavior
             return EAST;
         }
         float eval(MazeSquare * tmp, ORIENTATION orientation){
-            if (tmp == NULL){return 0;}
+            if (tmp == NULL){return -1;}
             float tmpVal = 0.0;
             if (this->orientation == orientation){tmpVal += 1;}
-            if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2.0;}
-            if (karadoc){
-                tmpVal -= (abs(tmp->i -6) / 4.0);
-                tmpVal -= (abs(tmp->j -6) / 4.0);
-            }
+            tmpVal -= this->explored[(tmp->j * 12) + tmp->i] / 2.0;
+            tmpVal += (abs(tmp->i -6) / 4.0);
+            tmpVal += (abs(tmp->j -6) / 4.0);
             tmpVal += tmp->coin.value;
             tmpVal -= tmp->danger;
             return tmpVal;
@@ -175,13 +173,16 @@ class Behavior
             {
                 return NULL;
             }
-            this->explored[(current->j * 12) + current->i] = true;
+            this->explored[(current->j * 12) + current->i] += 1;
             MazeSquare *next = NULL;
             float value = -1;
             MazeSquare *tmp;
             tmp = current->eastSquare;
             if (tmp){
                 float tmpVal = this->eval(tmp, EAST);
+                tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
+                tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
+                tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -190,6 +191,9 @@ class Behavior
             tmp = current->northSquare;
             if (tmp){
                 float tmpVal = this->eval(tmp, NORTH);
+                tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
+                tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
+                tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -198,6 +202,9 @@ class Behavior
             tmp = current->westSquare;
             if (tmp){
                 float tmpVal = this->eval(tmp, WEST);
+                tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
+                tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
+                tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -206,6 +213,9 @@ class Behavior
             tmp = current->southSquare;
             if (tmp){
                 float tmpVal = this->eval(tmp, SOUTH);
+                tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
+                tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
+                tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
