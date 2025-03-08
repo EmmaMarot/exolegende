@@ -5,18 +5,18 @@
 #include "gladiator.h"
 
 // PID parameters
-const float Kp_heading = 4.;
+const float Kp_heading = 2.5;
 // integral coef
-const float Ki_heading = 0.01;
+const float Ki_heading = 0.02;
 // derivative coeff
-const float Kd_heading = 0.3;
+const float Kd_heading = 0.0;
 
-const float DIST_ON_DEST = 0.025;
+const float DIST_ON_DEST = 0.05;
 const float MAX_INTEGRAL = 0.8;
 
 class MoveController{
     private:
-        float time_step = 0.05;
+        float time_step = 0.1;
     
         float target_x = 0.0;
         float target_y = 0.0;
@@ -78,12 +78,12 @@ class MoveController{
             while (error_heading > M_PI) error_heading -= 2*M_PI;
             while (error_heading < -M_PI) error_heading += 2*M_PI;
 
-            this->integral_heading += error_heading;
+            this->integral_heading += error_heading*this->time_step;
             this->integral_heading = std::max(-MAX_INTEGRAL, std::min(this->integral_heading, MAX_INTEGRAL));
-            this->derivative_heading = error_heading - prev_error_heading;
+            this->derivative_heading = (error_heading - prev_error_heading)/this->time_step;
             
             float error_dist = sqrt(error_x*error_x + error_y*error_y);
-            float desired_linear_velocity = sqrt(2*error_dist*0.03) + 0.2;
+            float desired_linear_velocity = sqrt(2*error_dist*0.03) + 0.17;
 
 
             float angular_velocity = (Kp_heading * error_heading) + 
