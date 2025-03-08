@@ -5,11 +5,11 @@
 #include "gladiator.h"
 
 // PID parameters
-const float Kp_heading = 2.5;
+const float Kp_heading = 2.6;
 // integral coef
-const float Ki_heading = 0.02;
+const float Ki_heading = 0.025;
 // derivative coeff
-const float Kd_heading = 0.0;
+const float Kd_heading = 0.3;
 
 const float DIST_ON_DEST = 0.05;
 const float MAX_INTEGRAL = 0.8;
