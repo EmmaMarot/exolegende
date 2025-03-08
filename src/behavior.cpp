@@ -17,6 +17,9 @@ enum ORIENTATION {
     SOUTH,
     WEST
 };
+
+const static bool karadoc = false;
+
 class Behavior
 {
     public: 
@@ -84,12 +87,17 @@ class Behavior
                 RobotData rd = this->gladiator->robot->getData();
                 this->orientation = this->get_orientation();
                 MazeSquare *next = this->get_next_cible(gladiator->maze->getNearestSquare());
-                
+                MazeSquare *dblnext = this->get_next_cible(next);
+                MazeSquare *local = this->gladiator->maze->getNearestSquare();     
                 if (next == NULL){
                     return;
                 }
                 POS ret = this->get_next_move(next, NULL);
-                if (next->danger == 0 && this->gladiator->maze->getNearestSquare()->danger == 0 && this->gladiator->weapon->getBombCount() > 0){
+                if (
+                    next != NULL && dblnext != NULL &&
+                    next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 0 &&
+                dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j) || karadoc)
+            ){
                     this->gladiator->weapon->dropBombs(1);
                 }
                 this->FPC->MC->set_target(ret.x, ret.y);
@@ -109,12 +117,13 @@ class Behavior
             float out = ms - cms;
             if (rd.position.x < (out / 2.0) || rd.position.y < (out / 2.0) || rd.position.x > ms - (out / 2.0) || rd.position.y > ms - (out /2.0))
             {
+                this->safe = false;
+
+            }else{
                 if (!this->safe){
-                    this->safe = false;
+                    this->safe = true;
                     this->set_next_dest();
                 }
-            }else{
-                this->safe = true;
             }
 
             if (!this->safe){
@@ -143,10 +152,15 @@ class Behavior
             if (angle >= -2.356 && angle < -0.785){return SOUTH;}
             return EAST;
         }
-        int eval(MazeSquare * tmp, ORIENTATION orientation){
-            int tmpVal = 0;
+        float eval(MazeSquare * tmp, ORIENTATION orientation){
+            if (tmp == NULL){return 0;}
+            float tmpVal = 0.0;
             if (this->orientation == orientation){tmpVal += 1;}
-            if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2;}
+            if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2.0;}
+            if (karadoc){
+                tmpVal -= (abs(tmp->i -6) / 4.0);
+                tmpVal -= (abs(tmp->j -6) / 4.0);
+            }
             tmpVal += tmp->coin.value;
             tmpVal -= tmp->danger;
             return tmpVal;
@@ -159,11 +173,11 @@ class Behavior
             }
             this->explored[(current->j * 12) + current->i] = true;
             MazeSquare *next = NULL;
-            int value = -1;
+            float value = -1;
             MazeSquare *tmp;
             tmp = current->eastSquare;
             if (tmp){
-                int tmpVal = this->eval(tmp, EAST);
+                float tmpVal = this->eval(tmp, EAST);
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -171,7 +185,7 @@ class Behavior
             }
             tmp = current->northSquare;
             if (tmp){
-                int tmpVal = this->eval(tmp, NORTH);
+                float tmpVal = this->eval(tmp, NORTH);
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -179,7 +193,7 @@ class Behavior
             }
             tmp = current->westSquare;
             if (tmp){
-                int tmpVal = this->eval(tmp, WEST);
+                float tmpVal = this->eval(tmp, WEST);
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -187,7 +201,7 @@ class Behavior
             }
             tmp = current->southSquare;
             if (tmp){
-                int tmpVal = this->eval(tmp, SOUTH);
+                float tmpVal = this->eval(tmp, SOUTH);
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
