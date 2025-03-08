@@ -4,6 +4,6 @@
 #include "user_utils.h"
 #include "gladiator.h"
 
-Position *getNearestEnemyPos(Gladiator *gladiator);
+void getNearestEnemyPos(Gladiator *gladiator, Position *pos);
 
 #endif
