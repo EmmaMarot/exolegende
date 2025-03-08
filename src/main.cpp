@@ -1,5 +1,7 @@
 #include "gladiator.h"
+#include "behavior.cpp"
 Gladiator *gladiator;
+Behavior *behavior;
 void reset();
 void setup()
 {
@@ -14,18 +16,23 @@ void reset()
     // fonction de reset:
     // initialisation de toutes vos variables avant le début d'un match
     gladiator->log("Call of reset function"); // GFA 4.5.1
+    behavior = new Behavior(gladiator);
+    behavior->MC->reset();
 }
 
 void loop()
 {
     if (gladiator->game->isStarted())
     { // tester si un match à déjà commencer
-        // code de votre stratégie
-        gladiator->log("Hello world - Game Started"); // GFA 4.5.1
+        // code de votre stratégie   
+        behavior->process();
+        // gladiator->control->setWheelSpeed(WheelAxis::LEFT, 0.6); //control de la roue gauche
+        // gladiator->control->setWheelSpeed(WheelAxis::RIGHT, 0.6); //controle de la roue droite
+
     }
     else
     {
-        gladiator->log("Hello world - Game not Startd yet"); // GFA 4.5.1
+        // gladiator->log("Hello world - Game not Startd yet"); // GFA 4.5.1
     }
-    delay(300);
+    delay(25);
 }
