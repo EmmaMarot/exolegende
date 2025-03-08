@@ -17,6 +17,7 @@ void reset()
     // initialisation de toutes vos variables avant le début d'un match
     gladiator->log("Call of reset function"); // GFA 4.5.1
     behavior = new Behavior(gladiator);
+    behavior->FPC->MC->reset();
 }
 
 void loop()
@@ -33,5 +34,5 @@ void loop()
     {
         // gladiator->log("Hello world - Game not Startd yet"); // GFA 4.5.1
     }
-    delay(300);
+    delay(25);
 }
