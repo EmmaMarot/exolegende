@@ -13,7 +13,7 @@ class PathFinder
 {
     public :
         PathFinder(){}
-        POS get_next_move()
+        POS get_next_move(Gladiator *gladiator)
         {
             struct POS ret;
             ret.x = 0.0;
@@ -37,13 +37,29 @@ class PathFinder
                 next = this->path[this->actual_index + 1];
             }
 
+            float sqrs = gladiator->maze->getSquareSize();
             if (next == NULL){
-                // Gladiator::Maze::getSquareSize()
-
+                ret.y = (current->i * sqrs) + (sqrs / 2.0);
+                ret.x = (current->j * sqrs) + (sqrs / 2.0);
                 // TODO retourner le centre de la celule
             }else{
+                ret.y = current->i * sqrs;
+                ret.x = current->j * sqrs;
+                if (current->i == next->i ){
+                    if (current->j < next->j){
+                        ret.x += sqrs;
+                    }
+                    ret.y += sqrs / 2.0;
+                }else{
+                    if (current->i < next->i ){
+                        ret.y += sqrs;
+                    }
+                    ret.x += sqrs / 2.0;
+
+                }
                 // TODO retourner la sortie de la celule
             }
+            // this->actual_index ++;
             return ret;
         }
         void set_path(MazeSquare *from, MazeSquare *to)
