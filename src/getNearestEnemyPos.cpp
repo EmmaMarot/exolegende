@@ -2,7 +2,7 @@
 #include "getNearestEnemyPos.h"
 #include <cmath>  // Ensure sqrt function is available
 
-Position *getNearestEnemyPos(Gladiator *gladiator) {
+void getNearestEnemyPos(Gladiator *gladiator, Position *pos) {
 
     RobotList robotList = gladiator->game->getPlayingRobotsId();
     byte *IDs = robotList.ids;
@@ -11,7 +11,6 @@ Position *getNearestEnemyPos(Gladiator *gladiator) {
     byte myTeamId = mydata.teamId;
     Position myPos = mydata.position;
 
-    Position *pos = NULL;
     float minDist = FLT_MAX;  // Initialize to a large value
 
     // Iterate over robot IDs to find the nearest enemy
@@ -31,13 +30,15 @@ Position *getNearestEnemyPos(Gladiator *gladiator) {
                 float dist_y = pos_temp.y - myPos.y;
                 float dist_tmp = sqrt(dist_x * dist_x + dist_y * dist_y);
 
+                gladiator->log("robot ID : (%hhu)", current_id);
+                gladiator->log("team ID : (%hhu)", robotTeamID);
+                gladiator->log("pos_temp : (%.2f, %.2f)", pos_temp.x, pos_temp.y);
+
                 if (dist_tmp < minDist) {
                     minDist = dist_tmp;
-                    pos = &pos_temp;
+                    *pos = pos_temp;
                 }
             }
         }
     }
-
-    return pos;  // Ensure function returns a value
 }
