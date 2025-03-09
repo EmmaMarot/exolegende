@@ -2,7 +2,6 @@
 #define PATHFINDER_H
 
 #include "gladiator.h"
-#include "bfs.h"
 
 struct POS {
     float x;
@@ -62,11 +61,7 @@ class PathFinder
             // this->actual_index ++;
             return ret;
         }
-        void set_path(MazeSquare *from, MazeSquare *to)
-        {
-            int pathLength ;
-            path = bfsPathFinder(from, to, pathLength);
-        }
+
     private :
         MazeSquare **path;
         int actual_index = 0;
