@@ -158,6 +158,20 @@ class Behavior
             if (angle >= 2.356 || angle < -2.356){return WEST;}
             if (angle >= -2.356 && angle < -0.785){return SOUTH;}
             return EAST;
+        }        
+        float isStressZone(int i, int j){
+            float cms = this->gladiator->maze->getCurrentMazeSize();
+            float ms = this->gladiator->maze->getSize();
+            float sqrs = this->gladiator->maze->getSquareSize();
+            float out = ms - cms;
+            float x = sqrs * i + (sqrs / 2.0);
+            float y = sqrs * j + (sqrs / 2.0);
+            if (x < (out / 2.0) - sqrs || y < (out / 2.0) - sqrs || x > ms - (out / 2.0) + sqrs || y > ms - (out /2.0) + sqrs)
+            {
+                return 1;
+            }else{
+                return 0;
+            }
         }
         float eval(MazeSquare * tmp, ORIENTATION orientation){
             if (tmp == NULL){return -1;}
@@ -174,6 +188,7 @@ class Behavior
                 tmpVal += tmp->coin.value;
             }
             tmpVal -= tmp->danger;
+            tmpVal -= this->isStressZone(tmp->i, tmp->j);
             return tmpVal;
         }
         MazeSquare* get_next_cible(MazeSquare *current)
