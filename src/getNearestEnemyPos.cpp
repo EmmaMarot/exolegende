@@ -21,8 +21,9 @@ void getNearestEnemyPos(Gladiator *gladiator, Position *pos) {
         {
             RobotData robotData = gladiator->game->getOtherRobotData(IDs[i]);
             byte robotTeamID = robotData.teamId;
+            byte lifes = robotData.lifes;
 
-            if (robotTeamID != myTeamId)  // Check if it's an enemy
+            if (lifes != 0 && robotTeamID != myTeamId)  // Check if it's an enemy
             {
                 Position pos_temp = robotData.position;
 
