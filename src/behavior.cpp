@@ -190,23 +190,8 @@ class Behavior
             if (tmp){
                 float tmpVal = this->eval(tmp, EAST);
                 tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
-                if (tmp->eastSquare){
-                    tmpVal += this->eval(tmp->eastSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->southSquare, SOUTH) / 9.0;
-                }
                 tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
-                if (tmp->northSquare){
-                    tmpVal += this->eval(tmp->northSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->westSquare, WEST) / 9.0;
-                }
                 tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
-                if (tmp->southSquare){
-                    tmpVal += this->eval(tmp->southSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->southSquare, SOUTH) / 9.0;
-                }
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -216,23 +201,8 @@ class Behavior
             if (tmp){
                 float tmpVal = this->eval(tmp, NORTH);
                 tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
-                if (tmp->eastSquare){
-                    tmpVal += this->eval(tmp->eastSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->southSquare, SOUTH) / 9.0;
-                }
                 tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
-                if (tmp->northSquare){
-                    tmpVal += this->eval(tmp->northSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->westSquare, WEST) / 9.0;
-                }
                 tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
-                if (tmp->westSquare){
-                    tmpVal += this->eval(tmp->westSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->southSquare, SOUTH) / 9.0;
-                }
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -242,23 +212,8 @@ class Behavior
             if (tmp){
                 float tmpVal = this->eval(tmp, WEST);
                 tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
-                if (tmp->westSquare){
-                    tmpVal += this->eval(tmp->westSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->southSquare, SOUTH) / 9.0;
-                }
                 tmpVal += this->eval(tmp->northSquare, NORTH) / 3.0;
-                if (tmp->northSquare){
-                    tmpVal += this->eval(tmp->northSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->northSquare->westSquare, WEST) / 9.0;
-                }
                 tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
-                if (tmp->southSquare){
-                    tmpVal += this->eval(tmp->southSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->southSquare, SOUTH) / 9.0;
-                }
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
@@ -268,23 +223,8 @@ class Behavior
             if (tmp){
                 float tmpVal = this->eval(tmp, SOUTH);
                 tmpVal += this->eval(tmp->eastSquare, EAST) / 3.0;
-                if (tmp->eastSquare){
-                    tmpVal += this->eval(tmp->eastSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->eastSquare->southSquare, SOUTH) / 9.0;
-                }
                 tmpVal += this->eval(tmp->westSquare, WEST) / 3.0;
-                if (tmp->westSquare){
-                    tmpVal += this->eval(tmp->westSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->northSquare, NORTH) / 9.0;
-                    tmpVal += this->eval(tmp->westSquare->southSquare, SOUTH) / 9.0;
-                }
                 tmpVal += this->eval(tmp->southSquare, SOUTH) / 3.0;
-                if (tmp->southSquare){
-                    tmpVal += this->eval(tmp->southSquare->eastSquare, EAST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->westSquare, WEST) / 9.0;
-                    tmpVal += this->eval(tmp->southSquare->southSquare, SOUTH) / 9.0;
-                }
                 if (tmpVal > value){
                     value = tmpVal;
                     next = tmp;
