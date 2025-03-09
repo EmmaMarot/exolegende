@@ -28,11 +28,7 @@ void getNearestEnemyPos(Gladiator *gladiator, Position *pos) {
 
                 float dist_x = pos_temp.x - myPos.x;
                 float dist_y = pos_temp.y - myPos.y;
-                float dist_tmp = sqrt(dist_x * dist_x + dist_y * dist_y);
-
-                gladiator->log("robot ID : (%hhu)", current_id);
-                gladiator->log("team ID : (%hhu)", robotTeamID);
-                gladiator->log("pos_temp : (%.2f, %.2f)", pos_temp.x, pos_temp.y);
+                float dist_tmp = dist_x + dist_y;
 
                 if (dist_tmp < minDist) {
                     minDist = dist_tmp;
