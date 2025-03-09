@@ -3,13 +3,17 @@
 
 #include <cmath>
 #include "gladiator.h"
+#include "user_utils.h"
 // #include "followPathController.cpp"
 #include "moveController.cpp"
 #include "pathFinder.cpp"
+#include "getNearestEnemyPos.h"
 
 enum ACTIONS {
     NONE,
-    MOVE_TO
+    MOVE_TO,
+    STRESS,
+    PANIC
 };
 
 enum ORIENTATION {
@@ -65,6 +69,15 @@ class Behavior
             }
         } */
 
+        void set_state(){
+            Position pos;
+            getNearestEnemyPos(this->gladiator, &pos);
+            Position local = this->gladiator->robot->getData().position;
+            float dist = sqrt(((pos.x - local.x)*(pos.x - local.x))+((pos.y - local.y)*(pos.y - local.y))); 
+            if (dist > 0.6){this->action = MOVE_TO;}
+            else if (dist > 0.25){this->action = STRESS;}
+            else{this->action = PANIC;} 
+        }
         POS get_next_move(MazeSquare *current, MazeSquare *next)
         {
             struct POS ret;
@@ -115,8 +128,14 @@ class Behavior
             this->MC->set_target(ms / 2.0, ms / 2.0);
         }
         void process(){
+            this->set_state();
             if (this->MC->is_on_dest()){
                 this->set_next_dest();
+            }
+            if (this->action == STRESS){
+                gladiator->control->setWheelSpeed(WheelAxis::LEFT, 0.9); //control de la roue gauche
+                gladiator->control->setWheelSpeed(WheelAxis::RIGHT, -1); //controle de la roue droite
+    
             }
             RobotData rd = this->gladiator->robot->getData();
             float cms = this->gladiator->maze->getCurrentMazeSize();
@@ -136,7 +155,9 @@ class Behavior
             if (!this->safe){
                 this->set_paniq_dest();
             }
-            this->MC->process();
+            if (this->action == MOVE_TO || this->action == PANIC){
+                this->MC->process();
+            }
         }
     
     private:
@@ -164,10 +185,8 @@ class Behavior
             float tmpVal = 0.0;
             if (this->orientation == orientation){tmpVal += 1;}
             if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2.0;}
-            if (karadoc){
-                tmpVal -= (abs(tmp->i -6) / 4.0);
-                tmpVal -= (abs(tmp->j -6) / 4.0);
-            }
+            tmpVal -= (abs(tmp->i -6) / 2.0) - 3;
+            tmpVal -= (abs(tmp->j -6) / 2.0) - 3;
             tmpVal += tmp->coin.value;
             tmpVal -= tmp->danger;
             return tmpVal;
