@@ -18,36 +18,6 @@ void reset()
     gladiator->log("Call of reset function"); // GFA 4.5.1
     behavior = new Behavior(gladiator);
     behavior->MC->reset();
-    // get other robot IDs
-    RobotList robotList = gladiator->game->getPlayingRobotsId();
-    byte *IDs = robotList.ids;
-
-    char buffer[64];
-    sprintf(buffer, "ROBOT IDS: (%hhu, %hhu, %hhu, %hhu)", IDs[0], IDs[1], IDs[2], IDs[3]);
-    gladiator->log("%s", buffer);
-
-    RobotData mydata = gladiator->robot->getData();
-    byte myTeamId = mydata.teamId;
-
-    // Iterate over robot IDs to find an ally
-    for (int i = 0; i < 4; i++)  // Assuming 'count' gives the number of robots
-    {
-        if (IDs[i] != mydata.id)  // Ensure we're not checking ourselves
-        {
-            RobotData robotData = gladiator->game->getOtherRobotData(IDs[i]);
-            byte robotTeamID = robotData.teamId;
-
-            if (robotTeamID == myTeamId)
-            {
-                behavior->ally = IDs[i];  // Store ally ID
-                break;  // Stop after finding the first ally
-            }
-        }
-    }
-
-    sprintf(buffer, "Ally ID: %hhu", behavior->ally);
-            gladiator->log("%s", buffer);
-
 }
 
 void loop()
