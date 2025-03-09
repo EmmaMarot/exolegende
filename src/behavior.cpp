@@ -116,7 +116,7 @@ class Behavior
                 if (
                     this->action == PANIC ||
                    (next != NULL && dblnext != NULL && local->possession != rd.teamId &&
-                    next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 0 &&
+                    next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 3 &&
                 dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j))
                 )){
                     int nb_bomb = this->gladiator->weapon->getBombCount();
@@ -190,6 +190,20 @@ class Behavior
             if (angle >= -2.356 && angle < -0.785){return SOUTH;}
             return EAST;
         }
+        float isStressZone(int i, int j){
+            float cms = this->gladiator->maze->getCurrentMazeSize();
+            float ms = this->gladiator->maze->getSize();
+            float sqrs = this->gladiator->maze->getSquareSize();
+            float out = ms - cms;
+            float x = sqrs * i + (sqrs / 2.0);
+            float y = sqrs * j + (sqrs / 2.0);
+            if (x < (out / 2.0) - sqrs || y < (out / 2.0) - sqrs || x > ms - (out / 2.0) + sqrs || y > ms - (out /2.0) + sqrs)
+            {
+                return 1;
+            }else{
+                return 0;
+            }
+        }
         float eval(MazeSquare * tmp, ORIENTATION orientation){
             if (tmp == NULL){return 0;}
             float tmpVal = 0.0;
@@ -206,6 +220,7 @@ class Behavior
             tmpVal -= (abs(tmp->j -6) / 2.0) - 3;
             tmpVal += tmp->coin.value;
             tmpVal -= tmp->danger;
+            tmpVal -= this->isStressZone(tmp->i, tmp->j) * 3;
             return tmpVal;
         }
         MazeSquare* get_next_cible(MazeSquare *current)
