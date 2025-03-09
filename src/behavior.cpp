@@ -75,7 +75,7 @@ class Behavior
             Position local = this->gladiator->robot->getData().position;
             float dist = sqrt(((pos.x - local.x)*(pos.x - local.x))+((pos.y - local.y)*(pos.y - local.y))); 
             if (dist > 0.6){this->action = MOVE_TO;}
-            else if (dist > 0.25){this->action = STRESS;}
+            else if (dist > 0.30 && this->action != PANIC){this->action = STRESS;}
             else{this->action = PANIC;} 
         }
         POS get_next_move(MazeSquare *current, MazeSquare *next)
@@ -114,11 +114,15 @@ class Behavior
                 }
                 POS ret = this->get_next_move(next, NULL);
                 if (
-                    next != NULL && dblnext != NULL &&
+                    this->action == PANIC ||
+                   (next != NULL && dblnext != NULL && local->possession != rd.teamId &&
                     next->danger == 0 && local->danger == 0 && this->gladiator->weapon->getBombCount() > 0 &&
-                dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j) || karadoc)
-            ){
-                    this->gladiator->weapon->dropBombs(1);
+                dblnext->danger == 0 && ((dblnext->i != next->i || dblnext->j != next->j) && (dblnext->i != local->i || dblnext->j != local->j))
+                )){
+                    int nb_bomb = this->gladiator->weapon->getBombCount();
+                    if (nb_bomb > 3){nb_bomb = 3;}
+                    if (this->action != PANIC){nb_bomb = 1;}
+                    this->gladiator->weapon->dropBombs(nb_bomb);
                 }
                 this->MC->set_target(ret.x, ret.y);
             }
@@ -148,6 +152,7 @@ class Behavior
             }else{
                 if (!this->safe){
                     this->safe = true;
+                    delay(1000);
                     this->set_next_dest();
                 }
             }
@@ -183,6 +188,16 @@ class Behavior
         float eval(MazeSquare * tmp, ORIENTATION orientation){
             if (tmp == NULL){return 0;}
             float tmpVal = 0.0;
+            
+            Position pos;
+            getNearestEnemyPos(this->gladiator, &pos);
+            Position local = this->gladiator->robot->getData().position;
+            float dist = sqrt(((pos.x - local.x)*(pos.x - local.x))+((pos.y - local.y)*(pos.y - local.y)));
+            if (this->action == PANIC){
+                tmpVal += 2.0 * dist;
+            }else{
+                tmpVal += 3.0 - dist;
+            }
             if (this->orientation == orientation){tmpVal += 1;}
             if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2.0;}
             tmpVal -= (abs(tmp->i -6) / 2.0) - 3;
