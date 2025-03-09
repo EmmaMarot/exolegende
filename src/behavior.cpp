@@ -132,6 +132,10 @@ class Behavior
             this->MC->set_target(ms / 2.0, ms / 2.0);
         }
         void process(){
+            Position pos;
+            getNearestEnemyPos(this->gladiator, &pos);
+            Position local = this->gladiator->robot->getData().position;
+            this->dist = ((pos.x - local.x))+((pos.y - local.y));
             this->set_state();
             if (this->MC->is_on_dest()){
                 this->set_next_dest();
@@ -173,6 +177,7 @@ class Behavior
         POS p; // coordoner reel en aproche
         bool safe = true;
         bool explored[244] = {false};
+        float dist = 4.0;
     
         enum ORIENTATION orientation;
         // pour le parcour du maze en main droite
@@ -189,14 +194,11 @@ class Behavior
             if (tmp == NULL){return 0;}
             float tmpVal = 0.0;
             
-            Position pos;
-            getNearestEnemyPos(this->gladiator, &pos);
-            Position local = this->gladiator->robot->getData().position;
-            float dist = sqrt(((pos.x - local.x)*(pos.x - local.x))+((pos.y - local.y)*(pos.y - local.y)));
+
             if (this->action == PANIC){
-                tmpVal += 2.0 * dist;
+                tmpVal += 2.0 * this->dist;
             }else{
-                tmpVal += 3.0 - dist;
+                tmpVal += 3.0 - this->dist;
             }
             if (this->orientation == orientation){tmpVal += 1;}
             if (this->explored[(tmp->j * 12) + tmp->i] == false){tmpVal += 2.0;}
