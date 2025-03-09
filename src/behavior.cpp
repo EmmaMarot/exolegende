@@ -23,7 +23,10 @@ const static bool karadoc = false;
 
 class Behavior
 {
-    public: 
+    public:
+
+        byte ally = 0;
+
         Behavior(Gladiator *gladiator)
         {
             this->gladiator = gladiator;
