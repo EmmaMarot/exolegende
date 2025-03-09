@@ -197,7 +197,7 @@ class Behavior
             float out = ms - cms;
             float x = sqrs * i + (sqrs / 2.0);
             float y = sqrs * j + (sqrs / 2.0);
-            if (x < (out / 2.0) - sqrs || y < (out / 2.0) - sqrs || x > ms - (out / 2.0) + sqrs || y > ms - (out /2.0) + sqrs)
+            if (x < (out / 2.0) + sqrs || y < (out / 2.0) + sqrs || x > ms - (out / 2.0) - sqrs || y > ms - (out /2.0) - sqrs)
             {
                 return 1;
             }else{
