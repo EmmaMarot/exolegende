@@ -22,7 +22,7 @@ void reset()
     RobotList robotList = gladiator->game->getPlayingRobotsId();
     byte *IDs = robotList.ids;
 
-    char buffer[64];
+    char buffer[64] = {0};
     sprintf(buffer, "ROBOT IDS: (%hhu, %hhu, %hhu, %hhu)", IDs[0], IDs[1], IDs[2], IDs[3]);
     gladiator->log("%s", buffer);
 
